@@ -53,10 +53,30 @@ app.post("/users", async (req, res) => {
   res.send(result);
 });
 
+//* update 
+app.patch('/user/:id', async(req, res) =>{
+  const id = req.params.id;
+  const updatedUser = req.body;
+
+  console.log(`upadtin user id:`,id , 'widht data:' ,updatedUser);
+  const filter = {
+    _id: new  ObjectId(id)
+  }
+  const options = {upsert: true};
+  const updateDoc = {
+    $set: {
+      name: updatedUser.name,
+      email: updatedUser.email
+    }
+  }
+  const result = await users.updateOne(filter, updateDoc, options);
+  res.send(result)
+})
+
 app.delete("/users/:id", async (req, res) => {
   const id = req.params.id;
   const query = { _id: new ObjectId(id) };
-  const result = await users.deleteOne(query);
+  const result = await users.deleteOne(query); 
   res.send(result);
 });
 

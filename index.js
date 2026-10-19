@@ -24,34 +24,41 @@ export async function connectToMongoDB() {
   }
 }
 const connectedClient = await connectToMongoDB();
-const db = connectedClient.db('simpleCrudDB');
-const users = db.collection('users')
+const db = connectedClient.db("simpleCrudDB");
+const users = db.collection("users");
 
 app.get("/", (req, res) => {
   res.send("Simple CRUD Server is running");
 });
 
-app.get('/user', async(req, res) =>{
-    const cursor = users.find({})
-    const allUsers = await cursor.toArray();
-    res.send(allUsers)
+app.get("/user", async (req, res) => {
+  const cursor = users.find({});
+  const allUsers = await cursor.toArray();
+  res.send(allUsers);
 });
 
-app.get('/users/id',async (req, res) => {
-  console.log('params in the server', req.params);
+app.get("/users/id", async (req, res) => {
+  console.log("params in the server", req.params);
   const id = req.params.id;
 
-  const query = {_id: new ObjectId(id)}
-  const result =await users.findOne(query);
-  res.send(result)
-})
+  const query = { _id: new ObjectId(id) };
+  const result = await users.findOne(query);
+  res.send(result);
+});
 
-app.post('/users',async(req, res)=>{
-  const newUser = req.body
-  console.log('adding new user:', newUser);
+app.post("/users", async (req, res) => {
+  const newUser = req.body;
+  console.log("adding new user:", newUser);
   const result = await users.insertOne(newUser);
-  res.send(result) 
-})
+  res.send(result);
+});
+
+app.delete("/users/:id", async (req, res) => {
+  const id = req.params.id;
+  const query = { _id: new ObjectId(id) };
+  const result = await users.deleteOne(query);
+  res.send(result);
+});
 
 app.listen(PORT, () => {
   console.log(`Simple CRUD Server is running on port : ${PORT}`);
